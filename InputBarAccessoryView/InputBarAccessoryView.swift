@@ -40,7 +40,8 @@ open class InputBarAccessoryView: UIView {
     open var backgroundView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        view.backgroundColor = .clear
+        view.isUserInteractionEnabled = false
         return view
     }()
     
@@ -369,8 +370,10 @@ open class InputBarAccessoryView: UIView {
     
     /// Sets up the default properties
     open func setup() {
-
-        backgroundColor = .white
+        if UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.pad {
+            frameInsets = UIApplication.shared.statusBarOrientation.isLandscape ? .leftPaddingLandscape : .leftPadding
+        }
+        backgroundColor = .clear
         autoresizingMask = [.flexibleHeight]
         setupSubviews()
         setupConstraints()
@@ -407,7 +410,12 @@ open class InputBarAccessoryView: UIView {
     
     /// Adds all of the subviews
     private func setupSubviews() {
-        
+        if #available(iOS 10.0, *) {
+            // Optica light gray
+            backgroundView.backgroundColor = UIColor(displayP3Red: 239.0 / 255.0, green: 241.0 / 255.0, blue: 246.0 / 255.0, alpha: 1.0)
+        } else {
+            backgroundView.backgroundColor = UIColor.lightGray
+        }
         addSubview(backgroundView)
         addSubview(topStackView)
         addSubview(contentView)
@@ -418,6 +426,7 @@ open class InputBarAccessoryView: UIView {
         contentView.addSubview(bottomStackView)
         middleContentViewWrapper.addSubview(inputTextView)
         middleContentView = inputTextView
+        middleContentView?.backgroundColor = UIColor.white
         setStackViewItems([sendButton], forStack: .right, animated: false)
     }
     
